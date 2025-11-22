@@ -363,7 +363,7 @@ export default function MusicAcademyLanding() {
               className="md:w-1/2"
             >
               <img
-                src="/founder.jpeg"
+                src="/founder1.jpeg"
                 alt="Manuel, Founder of Manuel's Music Academy"
                 className="w-full max-w-md mx-auto rounded-lg shadow-md object-cover aspect-square"
                 loading="lazy"
