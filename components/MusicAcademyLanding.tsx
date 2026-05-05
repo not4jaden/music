@@ -18,7 +18,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/lib/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { sendEmail } from "@/app/actions/send-email";
 import {
   Music,
   Users,
@@ -74,7 +73,6 @@ export default function MusicAcademyLanding() {
     phone: "",
     message: "I am interested in starting music lessons at Manuel's Music Academy and would like to book a session.",
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Theme persistence
   useEffect(() => {
@@ -103,39 +101,37 @@ export default function MusicAcademyLanding() {
     setMobileMenuOpen(false)
   }
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
 
-    try {
-      const result = await sendEmail(formData)
+    const subject = encodeURIComponent(
+      `Music Lesson Inquiry from ${formData.name}`
+    )
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\n` +
+      `Email: ${formData.email}\n` +
+      `Phone: ${formData.phone || "Not provided"}\n\n` +
+      `Message:\n${formData.message}`
+    )
 
-      if (result.success) {
-        addToast({
-          title: "Message sent successfully!",
-          description: "We'll get back to you within 24 hours.",
-        });
+    window.open(
+      `mailto:manuelsmusicschool@gmail.com?subject=${subject}&body=${body}`,
+      "_blank"
+    )
 
-        setEmailFormOpen(false)
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          message:
-            "I am interested in starting music lessons at Manuel's Music Academy and would like to book a session.",
-        });
-      } else {
-        throw new Error(result.message)
-      }
-    } catch (error) {
-      addToast({
-        title: "Failed to send message",
-        description: "Please try again or contact us directly.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false)
-    }
+    setEmailFormOpen(false)
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      message:
+        "I am interested in starting music lessons at Manuel's Music Academy and would like to book a session.",
+    })
+
+    addToast({
+      title: "Email client opened!",
+      description: "Your message has been pre-filled — just hit send.",
+    })
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -782,10 +778,9 @@ export default function MusicAcademyLanding() {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
                 className="bg-green-glow hover:bg-green-glow text-white hover:shadow-green-glow transition-all duration-300"
               >
-                {isSubmitting ? "Sending..." : "Send Message"}
+                Send Message
               </Button>
             </div>
           </form>
